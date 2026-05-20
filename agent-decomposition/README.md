@@ -47,7 +47,7 @@ creates (or updates) your agent and environment. Takes ~20s. Output:
 ✓ uploaded 5 data files, 5 skills, 1 tool module
 ✓ agent: stockpilot-starter-c7797427  (agent_01Hxxx...)
 ✓ environment: stockpilot-env-c7797427  (env_01Hxxx...)
-→ https://console.anthropic.com/managed-agents/agent_01Hxxx...
+→ https://platform.claude.com/workspaces/default/agents/agent_01Hxxx...
 ```
 
 ### Find it in the Console
