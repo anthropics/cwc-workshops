@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /** Shared error handling for the desk's API routes. */
 
 import Anthropic from "@anthropic-ai/sdk";

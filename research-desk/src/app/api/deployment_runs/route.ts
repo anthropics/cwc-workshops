@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 import { handle, queryParams } from "@/app/api/api-route";
 import { listDeploymentRuns } from "@/lib/preview";
 

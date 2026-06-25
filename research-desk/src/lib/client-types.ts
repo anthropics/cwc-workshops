@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /** Types and small helpers shared by the browser components. */
 
 export interface DeskStatus {

@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Session helpers shared by the orchestrator and the API routes.
  *

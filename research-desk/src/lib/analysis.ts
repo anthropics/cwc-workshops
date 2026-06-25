@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * The map step: one analyst session per ticker, run as a graded outcome,
  * fanned out with bounded concurrency. Runs entirely in the server.

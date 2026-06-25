@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 import { getClient } from "@/lib/anthropic";
 import { logEvent } from "@/lib/logger";
 

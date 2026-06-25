@@ -1,5 +1,8 @@
 "use client";
 
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 import { useState } from "react";
 
 import { api, type DeskStatus } from "@/lib/client-types";

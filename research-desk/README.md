@@ -1,3 +1,6 @@
+<!-- Copyright 2026 Anthropic PBC -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+
 # The Research Desk — SEC agents workshop
 
 Workshop sample code. Not maintained and not accepting contributions.

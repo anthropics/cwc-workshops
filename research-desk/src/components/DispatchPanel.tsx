@@ -1,5 +1,8 @@
 "use client";
 
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 import type { DispatchView } from "@/lib/client-types";
 
 export default function DispatchPanel({ dispatches }: { dispatches: DispatchView[] }) {

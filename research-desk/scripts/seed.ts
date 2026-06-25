@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Presenter seed: run one or two analyst sessions ahead of the workshop so the
  * Scorecards table, the desk memory, and a finished session in the Console all

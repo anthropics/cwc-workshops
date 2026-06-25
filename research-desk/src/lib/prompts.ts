@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /** Prompt templates live in prompts/ as Markdown with {placeholder} substitution. */
 
 import { readFileSync } from "node:fs";

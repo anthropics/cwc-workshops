@@ -1,3 +1,6 @@
+<!-- Copyright 2026 Anthropic PBC -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+
 # Workshop: staff a research desk with agents
 
 **AI.Engineer World's Fair · Claude Managed Agents — the financial edition**

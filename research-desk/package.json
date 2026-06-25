@@ -2,6 +2,7 @@
   "name": "research-desk",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "description": "The Research Desk: an SEC filings analysis desk built on Claude Managed Agents — agent-driven map-reduce, sub-agents, memory stores, skills, and outcomes, behind a self-hosted web console.",
   "scripts": {
     "dev": "next dev --port 3100",

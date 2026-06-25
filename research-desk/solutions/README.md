@@ -1,3 +1,6 @@
+<!-- Copyright 2026 Anthropic PBC -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+
 # Solutions
 
 Finished versions of the files the workshop leaves as `TODO(workshop-N)` stubs, at the same paths they have in the app:

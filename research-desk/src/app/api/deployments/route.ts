@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 import { handle, queryParams, rejectCrossSite } from "@/app/api/api-route";
 import { createMemoDeployment, listDeployments } from "@/lib/preview";
 import { loadConfig, saveConfig } from "@/lib/config";

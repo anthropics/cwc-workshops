@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 import { handle, rejectCrossSite } from "@/app/api/api-route";
 import { analyzeMany, loadDeskConfigOrThrow, makeRecords } from "@/lib/analysis";
 import { getClient } from "@/lib/anthropic";

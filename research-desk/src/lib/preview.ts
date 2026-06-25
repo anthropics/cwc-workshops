@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Deployments are a research-preview surface and not yet covered by the SDK,
  * so these calls go straight to the REST API with the server credential.

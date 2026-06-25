@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Provisioning of the desk's Anthropic resources, run from the Setup tab.
  *

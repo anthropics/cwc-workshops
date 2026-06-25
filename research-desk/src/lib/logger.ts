@@ -1,3 +1,6 @@
+// Copyright 2026 Anthropic PBC
+// SPDX-License-Identifier: Apache-2.0
+
 /** Structured one-line JSON logs to stdout (visible in `next dev` / docker logs). */
 
 const SENSITIVE_KEYS = new Set(["x-api-key", "api_key", "apikey", "authorization", "authorization_token"]);
