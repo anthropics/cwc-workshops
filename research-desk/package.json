@@ -1,0 +1,31 @@
+{
+  "name": "research-desk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Research Desk: an SEC filings analysis desk built on Claude Managed Agents — agent-driven map-reduce, sub-agents, memory stores, skills, and outcomes, behind a self-hosted web console.",
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "next build",
+    "start": "next start --port 3100",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "next lint",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "latest",
+    "next": "^15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

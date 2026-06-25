@@ -1,0 +1,16 @@
+# Semiconductor watchlist — one ticker per line; lines starting with # are ignored.
+NVDA
+AMD
+INTC
+AVGO
+QCOM
+TXN
+MU
+AMAT
+LRCX
+KLAC
+ADI
+MRVL
+ON
+MCHP
+NXPI
