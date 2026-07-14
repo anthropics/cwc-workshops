@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { createElement } from "react";
-import { z } from "zod";
 import { registerUnit } from "../core/registry";
 import type { TodoStatsProps } from "../../features/todos/TodoStats";
 import { TodoStats } from "../../features/todos/TodoStats";
@@ -15,18 +14,6 @@ registerUnit<TodoStatsProps>({
   description: "Footer: counts, filter buttons, clear-done.",
   kind: "component",
   render: (props) => createElement(TodoStats, props),
-  propsSchema: z
-    .object({
-      total: z.number().int().nonnegative(),
-      done: z.number().int().nonnegative(),
-      active: z.number().int().nonnegative(),
-      filter: z.enum(["all", "active", "done"]),
-      onFilter: z.function(),
-      onClearDone: z.function(),
-    })
-    .refine((d) => d.total === d.done + d.active, {
-      message: "total must equal done + active",
-    }),
   fixtures: [
     {
       id: "mixed",
@@ -68,7 +55,7 @@ registerUnit<TodoStatsProps>({
       id: "inconsistent-counts",
       probe: true,
       description:
-        "Probe: total !== done + active. The schema refine should FAIL this — demonstrates the framework catching a lie.",
+        "Probe: total !== done + active. The numbers shown on screen don't add up — a surface check should FAIL this, demonstrating the framework catching a lie.",
       props: {
         total: 10,
         done: 3,
@@ -79,7 +66,7 @@ registerUnit<TodoStatsProps>({
       },
     },
   ],
-  invariants: [
+  checks: [
     {
       id: "active-count-rendered",
       description: "rendered active count matches props.active",
@@ -121,13 +108,18 @@ registerUnit<TodoStatsProps>({
       },
     },
     {
-      id: "contract-consistency-flag",
-      description: "data-verify-consistent reflects whether counts add up",
-      check: ({ contract, props }) => {
-        const expected = String(props.total === props.done + props.active);
+      id: "counts-shown-add-up",
+      tag: "contract",
+      description: "the counts on the surface add up: total === done + active",
+      check: ({ contract }) => {
+        const total = Number(contract.total);
+        const done = Number(contract.done);
+        const active = Number(contract.active);
         return (
-          contract.consistent === expected ||
-          `consistent="${contract.consistent}", expected "${expected}"`
+          total === done + active ||
+          `surface shows total=${total} but done=${done} + active=${active} = ${
+            done + active
+          }`
         );
       },
     },

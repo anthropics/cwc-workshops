@@ -11,11 +11,12 @@
  *
  * Fixtures flagged `probe: true` that are DESIGNED to fail (like
  * TodoStats/inconsistent-counts) are asserted to FAIL — proving the
- * framework catches lies, not just confirms truths.
+ * framework catches lies (the counts shown on screen don't add up), not just
+ * confirms truths.
  */
 
 import { describe, expect, it } from "vitest";
-import "./verifiers";
+import "./checks";
 import "./specs";
 import { allUnits } from "./core/registry";
 import { runUnit } from "./core/runner";

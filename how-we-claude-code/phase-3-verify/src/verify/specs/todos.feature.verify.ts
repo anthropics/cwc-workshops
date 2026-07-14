@@ -2,18 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { createElement } from "react";
-import { z } from "zod";
 import { registerUnit } from "../core/registry";
 import type { TodoAppProps } from "../../features/todos/TodoApp";
 import { TodoApp } from "../../features/todos/TodoApp";
 import type { Todo } from "../../features/todos/types";
-
-const TodoSchema = z.object({
-  id: z.string().min(1),
-  text: z.string(),
-  done: z.boolean(),
-  createdAt: z.number(),
-});
 
 const seeded: Todo[] = [
   { id: "s1", text: "Read docs", done: true, createdAt: 1 },
@@ -35,9 +27,6 @@ registerUnit<TodoAppProps>({
   description: "The whole app with real state — cross-component coordination.",
   kind: "feature",
   render: (props) => createElement(TodoApp, props),
-  propsSchema: z.object({
-    initial: z.array(TodoSchema).optional(),
-  }),
   fixtures: [
     {
       id: "fresh",
@@ -100,9 +89,10 @@ registerUnit<TodoAppProps>({
       },
     },
   ],
-  invariants: [
+  checks: [
     {
       id: "app-has-contract",
+      tag: "contract",
       description: "app root emits data-verify-unit='TodoApp'",
       check: ({ contract }) =>
         contract.unit === "TodoApp" ||

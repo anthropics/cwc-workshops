@@ -23,7 +23,7 @@ export function Report({ result }: { result: VerifyResult }) {
         {result.checks.map((c, i) => (
           <li key={i} className={`check check-${c.status}`}>
             <CheckIcon status={c.status} />
-            <span className="check-verifier">[{c.verifier}]</span>
+            <span className="check-verifier">[{c.tag}]</span>
             <span className="check-label">{c.label}</span>
             {c.detail && <span className="check-detail">— {c.detail}</span>}
           </li>

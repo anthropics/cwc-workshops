@@ -7,27 +7,28 @@
  * Design principles:
  *  - Verification is runtime observation at the SURFACE (rendered DOM), not
  *    static analysis or unit tests.
+ *  - There are exactly TWO nouns: a `VerifiableUnit` (something renderable in
+ *    isolation) and a `Check` (a predicate over the mounted DOM). Everything
+ *    else — a11y, contract, behaviour — is just a Check with a `tag`.
  *  - Verdicts follow the PASS / FAIL / BLOCKED / SKIP taxonomy. BLOCKED means
- *    "couldn't observe", which is distinct from FAIL ("observed and wrong").
+ *    "couldn't observe" (e.g. the unit emitted no machine-readable contract),
+ *    which is distinct from FAIL ("observed and wrong").
  *  - Every verifiable unit declares FIXTURES: named, reproducible states.
  *    Fixtures marked `probe: true` are off-happy-path stress cases (🔍).
- *  - Verifiers are pluggable. Each one inspects a mounted unit and returns
- *    structured Check results. New verifier kinds can be added without
- *    touching any component code.
- *  - Output is machine-readable JSON first, human-readable dashboard second.
+ *  - Prop *shape* is TypeScript's job (compile time). Checks observe the
+ *    rendered surface at runtime — that's the only thing that ships.
  */
 
 import type { ReactElement } from "react";
-import type { ZodTypeAny } from "zod";
 
 /* -------------------------------------------------------------------------- */
-/* Verdicts & checks                                                          */
+/* Verdicts & check results                                                   */
 /* -------------------------------------------------------------------------- */
 
 export type Verdict = "PASS" | "FAIL" | "BLOCKED" | "SKIP";
 
 /**
- * One observation a verifier made. Statuses follow a four-way taxonomy:
+ * One observation the runner recorded. Statuses follow a four-way taxonomy:
  *  ok    (✅) — confirmed
  *  fail  (❌) — observed and wrong
  *  warn  (⚠️) — concerning, didn't fail outright
@@ -35,9 +36,11 @@ export type Verdict = "PASS" | "FAIL" | "BLOCKED" | "SKIP";
  */
 export type CheckStatus = "ok" | "fail" | "warn" | "probe";
 
-export interface Check {
-  /** Which verifier produced this check (e.g. "schema", "invariants"). */
-  verifier: string;
+export interface CheckResult {
+  /** The id of the check that produced this. */
+  check: string;
+  /** Reporting bucket: "behavior" | "contract" | "a11y" | … */
+  tag: string;
   status: CheckStatus;
   /** Short label — what was checked. */
   label: string;
@@ -47,12 +50,12 @@ export interface Check {
   evidence?: unknown;
 }
 
-/** The result of running all verifiers against one unit × fixture. */
+/** The result of running all checks against one unit × fixture. */
 export interface VerifyResult {
   unitId: string;
   fixtureId: string;
   verdict: Verdict;
-  checks: Check[];
+  checks: CheckResult[];
   /** Machine-readable snapshot of the DOM contract at time of run. */
   domSnapshot: Record<string, string>;
   /** Wall-clock timing for the run, ms. */
@@ -101,11 +104,11 @@ export interface ActContext {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Invariants                                                                 */
+/* Checks — the one and only kind of assertion                                */
 /* -------------------------------------------------------------------------- */
 
-/** What an invariant predicate sees: the mounted DOM + the fixture's props. */
-export interface InvariantContext<P = unknown> {
+/** What a Check predicate sees: the mounted DOM + the fixture's props. */
+export interface CheckContext<P = unknown> {
   root: HTMLElement;
   props: P;
   fixture: Fixture<P>;
@@ -114,39 +117,23 @@ export interface InvariantContext<P = unknown> {
 }
 
 /**
- * An Invariant is a named predicate over the mounted unit.
- * It returns `true` (holds), `false` (violated), or a string (violated, with
- * a human-readable explanation).
+ * A Check is a named predicate over the mounted unit. It returns:
+ *   - `true`   → the check holds (✅, or 🔍 on a probe fixture)
+ *   - `false`  → violated, no explanation
+ *   - a string → violated, with a human-readable reason
+ *
+ * A Check can be declared on a unit (component-specific behaviour) or
+ * registered as a GLOBAL check (cross-cutting: a11y, perf, …) that runs
+ * against every unit. Same shape either way — that's the whole point.
  */
-export interface Invariant<P = unknown> {
+export interface Check<P = unknown> {
   id: string;
   description: string;
-  check: (ctx: InvariantContext<P>) => boolean | string;
+  /** Reporting bucket. Defaults to "behavior" for unit checks. */
+  tag?: string;
+  check: (ctx: CheckContext<P>) => boolean | string;
   /** Optionally restrict to specific fixtures. Default: all. */
   onlyFixtures?: string[];
-}
-
-/* -------------------------------------------------------------------------- */
-/* Verifiers (pluggable)                                                      */
-/* -------------------------------------------------------------------------- */
-
-/** What every Verifier receives. */
-export interface VerifierContext<P = unknown> {
-  unit: VerifiableUnit<P>;
-  fixture: Fixture<P>;
-  root: HTMLElement;
-  contract: Record<string, string>;
-}
-
-/**
- * A Verifier is a pluggable check. It inspects a mounted unit and returns
- * zero or more Checks. Verifiers are independent of components — you can
- * attach new kinds (a11y, perf, visual) without touching any component.
- */
-export interface Verifier {
-  id: string;
-  description: string;
-  run: (ctx: VerifierContext) => Check[] | Promise<Check[]>;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -157,9 +144,10 @@ export interface Verifier {
  * A VerifiableUnit is the unit of modularity. It can be a single component
  * or a whole feature slice. It declares:
  *  - how to render itself in isolation (render + fixtures)
- *  - what its props must look like (propsSchema)
- *  - what must always be true when rendered (invariants)
- *  - which pluggable verifiers to run (verifiers — default: all registered)
+ *  - what must always be true when rendered (checks)
+ *
+ * Global checks (a11y, …) additionally run against every unit — see
+ * `registerGlobalCheck`.
  */
 export interface VerifiableUnit<P = unknown> {
   id: string;
@@ -169,15 +157,9 @@ export interface VerifiableUnit<P = unknown> {
   kind: "component" | "feature";
   /** Render the unit in isolation for a given fixture. */
   render: (props: P) => ReactElement;
-  /** Zod schema validating the props shape. */
-  propsSchema?: ZodTypeAny;
   fixtures: Fixture<P>[];
-  invariants: Invariant<P>[];
-  /**
-   * Which verifier IDs to run. Omit to run all registered verifiers.
-   * This is how verifiers are pluggable per unit.
-   */
-  verifiers?: string[];
+  /** Component-specific predicates over the mounted DOM. */
+  checks: Check<P>[];
 }
 
 /* -------------------------------------------------------------------------- */
@@ -189,8 +171,8 @@ export interface VerifyManifestEntry {
   title: string;
   kind: "component" | "feature";
   fixtures: Array<{ id: string; description: string; probe: boolean }>;
-  verifiers: string[];
-  invariants: Array<{ id: string; description: string }>;
+  /** Every check that will run against this unit (global + unit-local). */
+  checks: Array<{ id: string; description: string; tag: string }>;
   /** Deep-link to the isolated mount. */
   route: (fixtureId: string) => string;
 }

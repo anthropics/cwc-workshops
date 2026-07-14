@@ -2,19 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { createElement } from "react";
-import { z } from "zod";
 import { registerUnit } from "../core/registry";
 import type { TodoItemProps } from "../../features/todos/TodoItem";
 import { TodoItem } from "../../features/todos/TodoItem";
 
 const noop = () => {};
-
-const TodoSchema = z.object({
-  id: z.string().min(1),
-  text: z.string(),
-  done: z.boolean(),
-  createdAt: z.number(),
-});
 
 registerUnit<TodoItemProps>({
   id: "TodoItem",
@@ -22,11 +14,6 @@ registerUnit<TodoItemProps>({
   description: "A single todo row: checkbox, text, remove button.",
   kind: "component",
   render: (props) => createElement(TodoItem, props),
-  propsSchema: z.object({
-    todo: TodoSchema,
-    onToggle: z.function(),
-    onRemove: z.function(),
-  }),
   fixtures: [
     {
       id: "active",
@@ -72,9 +59,10 @@ registerUnit<TodoItemProps>({
       },
     },
   ],
-  invariants: [
+  checks: [
     {
       id: "done-attr-matches-prop",
+      tag: "contract",
       description: "data-verify-done reflects todo.done",
       check: ({ contract, props }) =>
         contract.done === String(props.todo.done) ||

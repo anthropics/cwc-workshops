@@ -5,8 +5,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-// Side-effect imports: register verifiers and unit specs.
-import "./verify/verifiers";
+// Side-effect imports: register global checks and unit specs.
+import "./verify/checks";
 import "./verify/specs";
 
 import { App } from "./App";

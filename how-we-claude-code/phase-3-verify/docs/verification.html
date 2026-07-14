@@ -169,6 +169,14 @@
 <div class="wrap">
 
 <h1>How Verification Works</h1>
+<p style="background:#3a2a00;border:1px solid #7a5c00;padding:12px 16px;border-radius:8px;">
+  <strong>⚠️ This document predates the framework simplification.</strong>
+  The <code>schema</code>, <code>invariants</code>, and <code>dom-contract</code>
+  verifiers and the <code>Verifier</code> plugin type no longer exist. The model
+  is now just two nouns — <code>VerifiableUnit</code> and <code>Check</code> — with
+  cross-cutting checks (a11y) registered globally and the missing-contract case
+  handled as <code>BLOCKED</code>. See <code>README.md</code> for the current design.
+</p>
 <p class="lead">
   An in-depth tour of the <code>verifiable-react</code> architecture: a React app
   structured so that <strong>every piece can be observed, driven, and verified at

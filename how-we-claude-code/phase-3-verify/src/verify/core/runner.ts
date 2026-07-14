@@ -2,16 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * The runner: mount a unit × fixture off-screen, run all applicable
- * verifiers, compute a verdict, return a structured VerifyResult.
+ * The runner: mount a unit × fixture, run every applicable check (global +
+ * unit-local), compute a verdict, return a structured VerifyResult.
  *
  * Verdict rules:
- *  - BLOCKED if we couldn't mount / had no verifiers / threw during setup.
- *  - FAIL if any check is "fail".
- *  - PASS otherwise (warn and probe don't fail the run).
- *  - SKIP if the unit declares zero fixtures — nothing to observe.
+ *  - SKIP    if the unit declares zero fixtures — nothing to observe.
+ *  - BLOCKED if we couldn't mount, or the unit emitted NO `data-verify-*`
+ *            contract (the surface isn't machine-readable → can't observe).
+ *  - FAIL    if any check failed.
+ *  - PASS    otherwise (warn and probe don't fail the run).
  *
- * "When in doubt, FAIL." Exceptions during a verifier become a "fail" check
+ * "When in doubt, FAIL." Exceptions thrown by a check become a "fail" result
  * with the error as evidence — we do not swallow.
  */
 
@@ -20,13 +21,14 @@ import { createRoot, type Root } from "react-dom/client";
 import type {
   ActContext,
   Check,
+  CheckResult,
   Fixture,
   VerifiableUnit,
   Verdict,
   VerifyResult,
 } from "./types";
 import { readContract } from "./contract";
-import { verifiersFor } from "./registry";
+import { checksFor } from "./registry";
 
 export interface RunOptions {
   /** Mount into this element instead of an off-screen container. Lets the
@@ -47,18 +49,6 @@ export async function runFixture<P>(
     fixtureId: fixture.id,
     timestamp: new Date().toISOString(),
   };
-
-  const applicable = verifiersFor(unit);
-  if (applicable.length === 0) {
-    return {
-      ...base,
-      verdict: "BLOCKED",
-      checks: [],
-      domSnapshot: {},
-      durationMs: ms(started),
-      blockedReason: `No verifiers registered for unit "${unit.id}".`,
-    };
-  }
 
   let container = opts.container ?? null;
   let ownRoot: Root | null = null;
@@ -101,32 +91,32 @@ export async function runFixture<P>(
     }
 
     const contract = readContract(container);
-    const checks: Check[] = [];
 
-    for (const v of applicable) {
-      try {
-        const produced = await v.run({
-          unit: unit as VerifiableUnit<unknown>,
-          fixture: fixture as Fixture<unknown>,
-          root: container,
-          contract,
-        });
-        checks.push(...produced);
-      } catch (err) {
-        checks.push({
-          verifier: v.id,
-          status: "fail",
-          label: `Verifier "${v.id}" threw`,
-          detail: String(err),
-          evidence: err instanceof Error ? err.stack : err,
-        });
-      }
+    // The DOM is the surface. If nothing emitted a data-verify-* contract,
+    // an agent has nothing reliable to read — that's BLOCKED (couldn't
+    // observe), deliberately distinct from FAIL (observed and wrong).
+    if (Object.keys(contract).length === 0) {
+      return {
+        ...base,
+        verdict: "BLOCKED",
+        checks: [],
+        domSnapshot: {},
+        durationMs: ms(started),
+        blockedReason:
+          "No data-verify-* contract emitted — the surface is not machine-readable.",
+      };
+    }
+
+    const results: CheckResult[] = [];
+    for (const c of checksFor(unit)) {
+      if (c.onlyFixtures && !c.onlyFixtures.includes(fixture.id)) continue;
+      results.push(runCheck(c, fixture, container, contract));
     }
 
     return {
       ...base,
-      verdict: verdictOf(checks),
-      checks,
+      verdict: verdictOf(results),
+      checks: results,
       domSnapshot: contract,
       durationMs: ms(started),
     };
@@ -143,6 +133,47 @@ export async function runFixture<P>(
     if (ownRoot) ownRoot.unmount();
     if (ownContainer) ownContainer.remove();
   }
+}
+
+/** Run one check and normalise its boolean|string outcome into a result. */
+function runCheck(
+  c: Check<any>,
+  fixture: Fixture<any>,
+  root: HTMLElement,
+  contract: Record<string, string>
+): CheckResult {
+  const tag = c.tag ?? "behavior";
+  let outcome: boolean | string;
+  try {
+    outcome = c.check({ root, props: fixture.props, fixture, contract });
+  } catch (err) {
+    return {
+      check: c.id,
+      tag,
+      status: "fail",
+      label: c.description,
+      detail: `Check "${c.id}" threw: ${String(err)}`,
+      evidence: err instanceof Error ? err.stack : err,
+    };
+  }
+  if (outcome === true) {
+    return {
+      check: c.id,
+      tag,
+      status: fixture.probe ? "probe" : "ok",
+      label: c.description,
+    };
+  }
+  return {
+    check: c.id,
+    tag,
+    status: "fail",
+    label: c.description,
+    detail:
+      typeof outcome === "string"
+        ? outcome
+        : `Check "${c.id}" returned false.`,
+  };
 }
 
 export async function runUnit<P>(
@@ -169,7 +200,7 @@ export async function runUnit<P>(
   return out;
 }
 
-export function verdictOf(checks: Check[]): Verdict {
+export function verdictOf(checks: CheckResult[]): Verdict {
   if (checks.some((c) => c.status === "fail")) return "FAIL";
   return "PASS";
 }

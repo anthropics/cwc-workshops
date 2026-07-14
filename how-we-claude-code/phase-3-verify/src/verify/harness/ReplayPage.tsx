@@ -596,14 +596,14 @@ function FrameStatus({ result }: { result: VerifyResult | null }) {
         <ul className="status-issues">
           {fails.map((c, i) => (
             <li key={`f${i}`}>
-              <CheckIcon status="fail" /> <code>[{c.verifier}]</code> {c.label}
+              <CheckIcon status="fail" /> <code>[{c.tag}]</code> {c.label}
               {c.detail && <span className="check-detail"> — {c.detail}</span>}
             </li>
           ))}
           {fails.length === 0 &&
             warns.map((c, i) => (
               <li key={`w${i}`}>
-                <CheckIcon status="warn" /> <code>[{c.verifier}]</code> {c.label}
+                <CheckIcon status="warn" /> <code>[{c.tag}]</code> {c.label}
               </li>
             ))}
         </ul>

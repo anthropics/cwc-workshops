@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { createElement } from "react";
-import { z } from "zod";
 import { registerUnit } from "../core/registry";
 import type { TodoInputProps } from "../../features/todos/TodoInput";
 import { TodoInput } from "../../features/todos/TodoInput";
@@ -15,10 +14,6 @@ registerUnit<TodoInputProps>({
   description: "The add-todo form: text input + submit button.",
   kind: "component",
   render: (props) => createElement(TodoInput, props),
-  propsSchema: z.object({
-    onAdd: z.function(),
-    placeholder: z.string().optional(),
-  }),
   fixtures: [
     {
       id: "empty",
@@ -43,7 +38,7 @@ registerUnit<TodoInputProps>({
       },
     },
   ],
-  invariants: [
+  checks: [
     {
       id: "submit-disabled-iff-empty",
       description: "submit button disabled iff trimmed value is empty",

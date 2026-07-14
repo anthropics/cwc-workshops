@@ -2,20 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { createElement } from "react";
-import { z } from "zod";
 import { registerUnit } from "../core/registry";
 import type { TodoListProps } from "../../features/todos/TodoList";
 import { TodoList } from "../../features/todos/TodoList";
 import type { Todo } from "../../features/todos/types";
 
 const noop = () => {};
-
-const TodoSchema = z.object({
-  id: z.string().min(1),
-  text: z.string(),
-  done: z.boolean(),
-  createdAt: z.number(),
-});
 
 const mixed: Todo[] = [
   { id: "t1", text: "Write the report", done: true, createdAt: 1 },
@@ -34,11 +26,6 @@ registerUnit<TodoListProps>({
   description: "Renders todos as a list, or an empty state.",
   kind: "component",
   render: (props) => createElement(TodoList, props),
-  propsSchema: z.object({
-    todos: z.array(TodoSchema),
-    onToggle: z.function(),
-    onRemove: z.function(),
-  }),
   fixtures: [
     {
       id: "empty",
@@ -70,9 +57,10 @@ registerUnit<TodoListProps>({
       },
     },
   ],
-  invariants: [
+  checks: [
     {
       id: "contract-count-matches",
+      tag: "contract",
       description: "data-verify-count equals props.todos.length",
       check: ({ contract, props }) =>
         contract.count === String(props.todos.length) ||

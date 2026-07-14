@@ -12,14 +12,14 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { allUnits, allVerifiers, buildManifest } from "../core/registry";
+import { allGlobalChecks, allUnits, buildManifest } from "../core/registry";
 import { runUnit } from "../core/runner";
 import type { VerifyResult } from "../core/types";
 import { VerdictBadge } from "./Badge";
 
 export function Dashboard() {
   const units = allUnits();
-  const verifiers = allVerifiers();
+  const globalChecks = allGlobalChecks();
   const [results, setResults] = useState<Map<string, VerifyResult> | null>(
     null
   );
@@ -54,7 +54,7 @@ export function Dashboard() {
       <header className="dash-header">
         <h1>Verification Dashboard</h1>
         <p className="dash-sub">
-          {units.length} unit(s) · {verifiers.length} verifier(s) · {" "}
+          {units.length} unit(s) · {globalChecks.length} global check(s) · {" "}
           {units.reduce((a, u) => a + u.fixtures.length, 0)} fixture(s)
         </p>
         <p className="dash-hint">
@@ -85,11 +85,15 @@ export function Dashboard() {
       </header>
 
       <section className="dash-verifiers">
-        <h2>Pluggable verifiers</h2>
+        <h2>Global checks</h2>
+        <p className="unit-desc">
+          Cross-cutting checks that run against every unit — no component or
+          spec opts in.
+        </p>
         <ul>
-          {verifiers.map((v) => (
-            <li key={v.id}>
-              <code>{v.id}</code> — {v.description}
+          {globalChecks.map((c) => (
+            <li key={c.id}>
+              <code>{c.id}</code> — {c.description}
             </li>
           ))}
         </ul>
@@ -138,13 +142,13 @@ export function Dashboard() {
             </tbody>
           </table>
           <details className="unit-invariants">
-            <summary>{unit.invariants.length} invariant(s)</summary>
+            <summary>{unit.checks.length} check(s)</summary>
             <ul>
-              {unit.invariants.map((i) => (
-                <li key={i.id}>
-                  <code>{i.id}</code> — {i.description}
-                  {i.onlyFixtures && (
-                    <em> (only: {i.onlyFixtures.join(", ")})</em>
+              {unit.checks.map((c) => (
+                <li key={c.id}>
+                  <code>{c.id}</code> — {c.description}
+                  {c.onlyFixtures && (
+                    <em> (only: {c.onlyFixtures.join(", ")})</em>
                   )}
                 </li>
               ))}
