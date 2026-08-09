@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     void analyzeMany(getClient(), cfg, tickers, { focus: body.focus ?? "", records: dispatch.records })
       .then(() => {
-        dispatch.status = dispatch.records.every((record) => record.status === "succeeded") ? "completed" : "completed";
+        dispatch.status = dispatch.records.every((record) => record.status === "succeeded") ? "completed" : "failed";
         dispatch.finishedAt = Date.now();
       })
       .catch((error) => {
