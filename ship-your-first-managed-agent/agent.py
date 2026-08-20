@@ -1,7 +1,7 @@
 # Copyright 2026 Anthropic PBC
 # SPDX-License-Identifier: Apache-2.0
 """
-The SRE Agent. Seven functions, each a single Managed Agents API call.
+The SRE Agent. Seven functions, each a single Managed Agents concept.
 Fill them in during the workshop. Everything else is in provided.py.
 """
 import json
@@ -9,6 +9,7 @@ import uuid
 
 import anthropic
 import streamlit as st
+from anthropic.lib import files_from_dir
 
 from provided import DATA, SYSTEM, TOOLS, metrics, deploys, diff
 
@@ -16,8 +17,10 @@ client = anthropic.Anthropic()
 
 
 # ── 1. Agent ──────────────────────────────────────────────────────────────
-# What the agent IS: model, system prompt, tools. Create once, reuse forever.
-# Hint: client.beta.agents.create(name=..., model=..., system=SYSTEM, tools=TOOLS)
+# What the agent IS: model, system prompt, tools, skills. Create once, reuse forever.
+# Hint: client.beta.skills.create(display_title=..., files=files_from_dir(...))
+#       then client.beta.agents.create(..., skills=[...]). display_title must be
+#       unique per org — suffix it with uuid like setup_environment() does.
 @st.cache_resource
 def setup_agent() -> str:
     raise NotImplementedError

@@ -36,6 +36,8 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
 pip install -r requirements.txt
 cp .env.example .env               # then put your ANTHROPIC_API_KEY in .env
+
+python data/generate_log.py        # writes data/app.log (70k lines, not in git)
 streamlit run app.py
 ```
 
@@ -50,7 +52,7 @@ in and the panel comes online one step at a time.
 
 | # | Function | API call | Lines |
 |---|---|---|---|
-| 1 | `setup_agent()` | `client.beta.agents.create` | 3 |
+| 1 | `setup_agent()` | `client.beta.skills.create` + `agents.create` | 7 |
 | 2 | `setup_environment()` | `client.beta.environments.create` | 4 |
 | 3 | `upload_log()` | `client.beta.files.upload` | 2 |
 | 4 | `start_session()` | `client.beta.sessions.create` | 5 |
@@ -58,8 +60,8 @@ in and the panel comes online one step at a time.
 | 6 | `handle_tool()` | runs locally — reads `data/*.json` | 7 |
 | 7 | `delete_session()` | `client.beta.sessions.delete` | 1 |
 
-That's ~34 lines total. Everything else — the system prompt, tool schemas,
-the chat UI, the session picker — is provided in `provided.py`.
+That's ~38 lines total. Everything else — the system prompt, tool schemas,
+the runbook skill, the chat UI, the session picker — is provided.
 
 Stuck? `agent_complete.py` has the finished versions.
 
@@ -85,6 +87,9 @@ The agent has to correlate all four to name the root cause. It does.
   resources, in the order the
   [quickstart](https://platform.claude.com/docs/en/managed-agents/quickstart)
   introduces them
+- **Skills** — `incident-triage-runbook/SKILL.md` packages this team's runbook;
+  uploaded and attached inside `setup_agent()` so every session follows the
+  same conventions
 - **Sandboxed code execution** — the agent writes and runs Python in a
   managed container you never provision
 - **Custom tools** — the agent in the cloud calls functions on your laptop
@@ -104,6 +109,7 @@ e2e.py              ← headless test of the full path
 
 app.py              ← incident overview
 pages/              ← Metrics, Logs, Deploys
+incident-triage-runbook/  ← the team's runbook skill (SKILL.md)
 data/               ← log + metrics + deploys + diff fixtures
 ui.py, assets/      ← styling
 ```
