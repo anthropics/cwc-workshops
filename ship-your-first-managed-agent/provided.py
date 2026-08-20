@@ -15,9 +15,9 @@ DATA = Path("data")
 SYSTEM = """\
 You are the SRE Agent — an SRE/data-analyst agent embedded in an incident
 dashboard. The application log is mounted at /mnt/session/uploads/app.log (large; use
-grep/python to analyze it, don't read it whole). You have local tools
-(get_metrics, get_recent_deploys, get_diff) that query the same data the
-dashboard shows. Correlate evidence and state findings plainly and concisely.
+grep/python to analyze it, don't read it whole). You have local tools that
+query the same data the dashboard shows. Correlate evidence and state findings
+plainly and concisely.
 """
 
 TOOLS = [
@@ -43,6 +43,13 @@ diff = (DATA / "diff.txt").read_text()
 def _offline(fn: str):
     st.caption(f"agent offline — implement `{fn}()` in `agent.py`")
     st.chat_input("ask…", disabled=True, key=f"off_{fn}")
+
+
+@st.cache_data
+def _agent_skills(agent_id: str) -> list[str]:
+    import agent
+    a = agent.client.beta.agents.retrieve(agent_id)
+    return [s.skill_id for s in (a.skills or [])]
 
 
 @st.cache_data(ttl=20)
@@ -95,6 +102,8 @@ def chat_panel():
     except NotImplementedError:
         return _offline("setup_agent")
     st.caption(f"agent · `{agent_id}`")
+    for sk in _agent_skills(agent_id):
+        st.caption(f"skill · `{sk}`")
 
     try:
         env_id = agent.setup_environment()

@@ -8,10 +8,12 @@ import uuid
 from pathlib import Path
 
 import anthropic
+from anthropic.lib import files_from_dir
 from dotenv import load_dotenv
 
 load_dotenv()
-DATA = Path(__file__).parent / "data"
+HERE = Path(__file__).parent
+DATA = HERE / "data"
 client = anthropic.Anthropic()
 
 SYSTEM = (
@@ -48,8 +50,15 @@ def handle(name, args):
     return "unknown"
 
 
-# 1. Agent
-agent = client.beta.agents.create(name="SRE Agent", model="claude-opus-4-7", system=SYSTEM, tools=TOOLS)
+# 1. Agent (upload runbook skill, then attach it)
+skill = client.beta.skills.create(
+    display_title=f"Incident Triage Runbook {uuid.uuid4().hex[:6]}",
+    files=files_from_dir(HERE / "incident-triage-runbook"),
+)
+agent = client.beta.agents.create(
+    name="SRE Agent", model="claude-opus-4-8", system=SYSTEM, tools=TOOLS,
+    skills=[{"type": "custom", "skill_id": skill.id, "version": "latest"}],
+)
 # 2. Environment
 env = client.beta.environments.create(
     name=f"sre-agent-e2e-{uuid.uuid4().hex[:6]}",
@@ -64,7 +73,7 @@ session = client.beta.sessions.create(
     environment_id=env.id,
     resources=[{"type": "file", "file_id": log.id, "mount_path": "app.log"}],
 )
-print(f"agent={agent.id} env={env.id} session={session.id}")
+print(f"skill={skill.id} agent={agent.id} env={env.id} session={session.id}")
 
 transcript = []
 deadline = time.monotonic() + 600
