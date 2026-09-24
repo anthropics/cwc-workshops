@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c0f14">
+<title>Split</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <section class="hero" aria-live="polite">
+    <p class="hint" id="hint">Type the bill below and the answer shows up here.</p>
+    <div id="result" hidden>
+      <small>Each person pays</small>
+      <div class="per" id="per"></div>
+      <p id="detail"></p>
+      <p id="extra"></p>
+    </div>
+  </section>
+  <section class="sheet">
+    <label class="field">
+      <span>$</span>
+      <input id="bill" inputmode="decimal" placeholder="Bill total (with tax)" autocomplete="off" aria-label="Bill total including tax">
+    </label>
+    <div class="chips" role="group" aria-label="Tip percentage">
+      <button data-tip="15">15%</button>
+      <button data-tip="18">18%</button>
+      <button data-tip="20">20%</button>
+      <button data-tip="25">25%</button>
+      <input id="custom" inputmode="decimal" placeholder="Other %" autocomplete="off" aria-label="Custom tip percentage">
+    </div>
+    <div class="people">
+      <label id="peopleLabel">People</label>
+      <div class="ctl" role="group" aria-labelledby="peopleLabel">
+        <button id="minus" aria-label="Fewer people">−</button>
+        <b id="count">2</b>
+        <button id="plus" aria-label="More people">+</button>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

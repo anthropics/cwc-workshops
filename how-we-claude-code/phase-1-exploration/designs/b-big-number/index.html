@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B · Big Number — calculator</title><link rel="stylesheet" href="style.css"></head>
+<body data-bill="" data-tip="18" data-n="4">
+<div class="app">
+  <section class="hero">
+    <div class="empty-only"><p class="hint">Type the bill below and the answer shows up here.</p></div>
+    <div class="result-only" hidden>
+      <small>Each person pays</small>
+      <div class="per" data-out="per"></div>
+      <p><span data-out="people"></span> · <span data-out="tippct"></span> tip · total <span data-out="total"></span></p>
+      <p>Rounded up · payer collects <span data-out="extra"></span> extra</p>
+    </div>
+  </section>
+  <section class="sheet">
+    <div class="field"><span>$</span><input data-in="bill" inputmode="decimal" placeholder="Bill total" autofocus></div>
+    <div class="chips">
+      <button data-tip="15">15%</button><button data-tip="18">18%</button><button data-tip="20">20%</button><button data-tip="25">25%</button>
+      <input data-custom inputmode="decimal" placeholder="Other">
+    </div>
+    <div class="people"><label>People</label><div class="ctl"><button data-step="-1">−</button><b data-out="count">4</b><button data-step="1">+</button></div></div>
+  </section>
+</div>
+<script src="../shared/calc.js"></script></body></html>

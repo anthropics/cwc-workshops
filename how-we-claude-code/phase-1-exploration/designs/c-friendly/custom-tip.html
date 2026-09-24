@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C · Friendly cards — custom tip, 7 people</title><link rel="stylesheet" href="style.css"></head>
+<body data-bill="212.47" data-tip="22" data-n="7">
+<div class="app">
+  <h1>🍽️ Split the check</h1>
+  <div class="card"><h2>Bill (with tax)</h2><div class="bill">$<input data-in="bill" inputmode="decimal" placeholder="0.00"></div></div>
+  <div class="card"><h2>Tip</h2>
+    <div class="chips"><button data-tip="15">15%</button><button data-tip="18">18%</button><button data-tip="20">20%</button><button data-tip="25">25%</button></div>
+    <div class="other">or custom <input data-custom inputmode="decimal" placeholder="—"> %</div>
+  </div>
+  <div class="card"><h2>How many people?</h2><div class="people"><button data-step="-1">−</button><b data-out="count">7</b><button data-step="1">+</button></div></div>
+  <div class="result empty empty-only">Enter the bill to see each share 👆</div>
+  <div class="result result-only" hidden>
+    <small>Everyone chips in</small><div class="per" data-out="per"></div>
+    <p><span data-out="people"></span> · <span data-out="tippct"></span> tip · total <span data-out="total"></span></p>
+    <p>Rounded up — payer collects <span data-out="extra"></span> extra</p>
+  </div>
+</div>
+<script src="../shared/calc.js"></script></body></html>

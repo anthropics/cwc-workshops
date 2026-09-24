@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D · Sentence — calculator</title><link rel="stylesheet" href="style.css"></head>
+<body data-bill="" data-tip="18" data-n="4">
+<main class="app">
+  <p class="sentence">
+    We're <span class="n"><button data-step="-1" aria-label="fewer">−</button><b data-out="count">4</b><button data-step="1" aria-label="more">+</button></span> people
+    splitting a $<input data-in="bill" inputmode="decimal" placeholder="0.00" autofocus> bill
+    and tipping
+    <span class="tips"><button data-tip="15">15%</button><button data-tip="18">18%</button><button data-tip="20">20%</button><button data-tip="25">25%</button></span>
+    or <input data-custom inputmode="decimal" placeholder="__">%.
+  </p>
+  <section class="answer">
+    <p class="hint empty-only">…fill in the blanks and we'll tell you what each person owes.</p>
+    <div class="result-only" hidden>
+      <div>Each pays</div>
+      <div class="per" data-out="per"></div>
+      <p>Total <span data-out="total"></span> incl. <span data-out="tip"></span> tip · rounded up, payer collects <span data-out="extra"></span> extra</p>
+    </div>
+  </section>
+</main>
+<script src="../shared/calc.js"></script></body></html>

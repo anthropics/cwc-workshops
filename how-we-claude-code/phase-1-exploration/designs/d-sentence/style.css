@@ -1,0 +1,19 @@
+*{box-sizing:border-box;margin:0}
+body{font-family:Georgia,"Times New Roman",serif;background:#fafaf7;color:#1c1c1c;min-height:100vh;display:flex;justify-content:center;padding:48px 24px}
+.app{width:100%;max-width:400px}
+.sentence{font-size:30px;line-height:2;}
+.sentence input{width:5.2ch;border:0;border-bottom:2px solid #1c1c1c;background:none;font:inherit;text-align:center;outline:0;color:#2b59c3;padding:0}
+.sentence input#wide,.sentence input[data-in]{width:6.5ch}
+.sentence input:focus{border-bottom-color:#2b59c3}
+.sentence input.on{border-bottom:2px solid #2b59c3}
+.sentence button{font:inherit;color:#2b59c3;background:none;border:0;cursor:pointer;padding:0 4px}
+.sentence button.on{background:#2b59c3;color:#fff;border-radius:6px}
+.sentence .n{display:inline-flex;align-items:center;gap:2px;border-bottom:2px solid #1c1c1c}
+.sentence .n button{font-size:26px}
+.sentence .n button:disabled{opacity:.3}
+.sentence .n b{font-weight:400;min-width:1.4ch;text-align:center;color:#2b59c3}
+.tips{display:inline-flex;flex-wrap:wrap;gap:2px}
+.answer{margin-top:40px;padding-top:24px;border-top:1px solid #d8d8d0}
+.answer .per{font-size:64px;font-weight:700;letter-spacing:-.02em}
+.answer p{font-size:16px;color:#666;margin-top:6px;font-family:system-ui,sans-serif}
+.answer .hint{font-size:20px;color:#999;font-family:Georgia,serif;font-style:italic}

@@ -1,0 +1,23 @@
+*{box-sizing:border-box;margin:0}
+body{font-family:"Trebuchet MS",system-ui,sans-serif;background:#fff6e5;color:#3b2a1a;min-height:100vh;display:flex;justify-content:center;padding:20px 16px}
+.app{width:100%;max-width:400px;display:grid;gap:16px;align-content:start}
+h1{font-size:26px;text-align:center}
+.card{background:#fff;border-radius:24px;padding:18px;box-shadow:0 4px 0 #f0d9b0}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#a5794a;margin-bottom:10px}
+.bill{display:flex;align-items:center;font-size:44px;font-weight:700}
+.bill input{flex:1;min-width:0;border:0;font:inherit;color:inherit;outline:0;background:none;padding-left:6px}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chips button{padding:14px 0;border-radius:16px;border:2px solid #f0d9b0;background:#fff;font:700 18px inherit;color:#3b2a1a;cursor:pointer}
+.chips button.on{background:#ff8a3d;border-color:#ff8a3d;color:#fff}
+.other{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;color:#a5794a}
+.other input{width:80px;padding:8px 10px;border-radius:12px;border:2px solid #f0d9b0;font:700 16px inherit;text-align:center;color:#3b2a1a}
+.other input.on{border-color:#ff8a3d;background:#fff1e6}
+.people{display:flex;align-items:center;justify-content:space-between}
+.people button{width:52px;height:52px;border-radius:50%;border:0;background:#ffd9b8;font-size:28px;color:#3b2a1a;cursor:pointer}
+.people button:disabled{opacity:.35}
+.people b{font-size:36px}
+.result{background:#3b2a1a;color:#fff6e5;border-radius:24px;padding:22px;text-align:center}
+.result small{opacity:.7;font-size:14px}
+.result .per{font-size:60px;font-weight:800;color:#ffc94d;margin:4px 0}
+.result p{font-size:13px;opacity:.75;margin-top:4px}
+.result.empty{opacity:.6;font-size:16px}

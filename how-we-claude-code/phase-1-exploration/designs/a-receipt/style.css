@@ -1,0 +1,25 @@
+*{box-sizing:border-box;margin:0}
+body{font-family:"Courier New",monospace;background:#e8e2d3;min-height:100vh;display:flex;justify-content:center;padding:24px 16px;color:#222}
+.receipt{width:100%;max-width:380px;background:#fffdf7;padding:28px 22px 36px;box-shadow:0 6px 24px #0002;
+  -webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/16px 100%;mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/16px 100%}
+h1{text-align:center;font-size:20px;letter-spacing:.2em}
+.sub{text-align:center;font-size:12px;color:#777;margin:4px 0 16px}
+hr{border:0;border-top:2px dashed #bbb;margin:16px 0}
+label{display:block;font-size:12px;letter-spacing:.1em;margin-bottom:6px}
+.bill{display:flex;align-items:center;border-bottom:2px solid #222;font-size:40px}
+.bill input{flex:1;min-width:0;border:0;background:none;font:inherit;padding:4px;outline:0}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chips button,.custom input{font:inherit;font-size:16px;padding:12px 0;border:2px solid #222;background:none;text-align:center;cursor:pointer}
+.chips button.on,.custom input.on{background:#222;color:#fffdf7}
+.custom{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:14px}
+.custom input{width:90px;padding:8px;cursor:text}
+.stepper{display:flex;justify-content:space-between;align-items:center}
+.stepper button{width:56px;height:56px;border:2px solid #222;background:none;font:inherit;font-size:28px;cursor:pointer}
+.stepper button:disabled{opacity:.3}
+.stepper b{font-size:40px}
+.row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+.each{text-align:center;padding:8px 0}
+.each small{font-size:12px;letter-spacing:.15em}
+.each strong{display:block;font-size:56px;margin-top:4px}
+.note{font-size:11px;color:#777;text-align:center}
+.empty{text-align:center;color:#999;padding:24px 0;font-size:14px}

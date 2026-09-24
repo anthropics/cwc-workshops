@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A · Receipt — custom tip, 7 people</title><link rel="stylesheet" href="style.css"></head>
+<body data-bill="212.47" data-tip="22" data-n="7">
+<main class="receipt">
+  <h1>SPLIT.</h1><p class="sub">Table check · even split</p><hr>
+  <label>BILL TOTAL (WITH TAX)</label>
+  <div class="bill">$<input data-in="bill" inputmode="decimal" placeholder="0.00"></div>
+  <hr>
+  <label>TIP</label>
+  <div class="chips">
+    <button data-tip="15">15%</button><button data-tip="18">18%</button><button data-tip="20">20%</button><button data-tip="25">25%</button>
+  </div>
+  <div class="custom">Custom <input data-custom inputmode="decimal" placeholder="__"> %</div>
+  <hr>
+  <label>PEOPLE</label>
+  <div class="stepper"><button data-step="-1">−</button><b data-out="count">7</b><button data-step="1">+</button></div>
+  <hr>
+  <div class="empty empty-only">Enter the bill to see what everyone owes.</div>
+  <div class="result-only" hidden>
+    <div class="row"><span>Bill</span><span data-out="bill"></span></div>
+    <div class="row"><span>Tip (<span data-out="tippct"></span>)</span><span data-out="tip"></span></div>
+    <div class="row"><b>Total</b><b data-out="total"></b></div>
+    <hr>
+    <div class="each"><small>EACH OF <span data-out="people"></span> PAYS</small><strong data-out="per"></strong></div>
+    <p class="note">Shares rounded up · payer collects <span data-out="extra"></span> extra</p>
+  </div>
+</main>
+<script src="../shared/calc.js"></script></body></html>
