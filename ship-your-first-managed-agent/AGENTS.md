@@ -27,7 +27,7 @@ Do the parts in order. If an earlier part is still a stub, do that one first and
 
 1. Read the stub comments for that part. They give the exact call shapes and the values you cannot look up (model constants, mount paths, the beta header). Use them as written.
 2. Implement only that part's functions, plus the small additions the comments name in earlier functions (the roster in `setup_agent()`, the memory resources in `start_session()`, the second skill).
-3. Run `python check.py --part N`. It drives the live API and prints PASS or FAIL per part. Fix what fails and run it again.
+3. Run `.venv/bin/python check.py --part N` (plain `python` if there is no `.venv`; `.venv\Scripts\python` on Windows). It drives the live API and prints PASS or FAIL per part. Fix what fails and run it again.
 4. Explain what you did in three short bullets: what changed, the Managed Agents concept it uses, and where to see it in the dashboard.
 
 ## Rules
@@ -54,7 +54,8 @@ Changes take effect on the next dashboard rerun or `check.py` run: a changed pro
 
 ## Useful facts
 
-- Run the dashboard with `streamlit run app.py`. The chat panel shows which parts are on.
+- `./setup.sh` does the one-time setup and starts the dashboard. If someone asks you to set things up, run it for them, but let them paste the API key themselves.
+- The dashboard is usually already running in their other terminal. It reloads by itself when `agent.py` changes.
 - The log is mounted in the container at `/mnt/session/uploads/app.log`.
 - Custom tools run on this machine in `handle_tool()`. A sub-agent's custom tool call arrives on the session stream with `session_thread_id` set; answer it like any other.
 - Memory stores attach when a session is created, not afterwards.
