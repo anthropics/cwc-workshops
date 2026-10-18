@@ -44,15 +44,24 @@ client = anthropic.Anthropic()
 #       create=lambda: client.beta.environments.create(name=state.name("env"), config=config, metadata=state.owner()),
 #       update=lambda env_id: client.beta.environments.update(env_id, config=config))
 def setup_environment() -> str:
-    raise NotImplementedError
-
+    config = {"type": "cloud", "networking": {"type": "unrestricted"}}
+    return state.sync(
+        "environment", config,
+        create=lambda: client.beta.environments.create(
+            name=state.name("env"), config=config, metadata=state.owner()),
+        update=lambda env_id: client.beta.environments.update(env_id, config=config),
+    )
 
 # ── 2. Upload the log ─────────────────────────────────────────────────────
 # Push data/app.log to the Files API so sessions can mount it.
 #   client.beta.files.upload(file=<open binary file>)   -> object with .id
 #   state.sync("log", {"bytes": <file size>}, create=...)
 def upload_log() -> str:
-    raise NotImplementedError
+    path = DATA / "app.log"
+    def create():
+        with open(path, "rb") as f:
+            return client.beta.files.upload(file=f)
+    return state.sync("log", {"bytes": path.stat().st_size}, create=create)
 
 
 # ── 3. Skills ─────────────────────────────────────────────────────────────
@@ -63,7 +72,14 @@ def upload_log() -> str:
 #   state.sync(f"skill:{folder}", state.dir_fingerprint(path), create, update)
 # Return the reference an agent uses: {"type": "custom", "skill_id": ..., "version": "latest"}
 def setup_skill(folder: str) -> dict:
-    raise NotImplementedError
+    path = SKILLS / folder
+    skill_id = state.sync(
+        f"skill:{folder}", state.dir_fingerprint(path),
+        create=lambda: client.beta.skills.create(
+            display_title=f"{folder} ({state.handle()})", files=files_from_dir(path)),
+        update=lambda sid: client.beta.skills.versions.create(sid, files=files_from_dir(path)),
+    )
+    return {"type": "custom", "skill_id": skill_id, "version": "latest"}
 
 
 # ── 4. Agent ──────────────────────────────────────────────────────────────
@@ -82,7 +98,16 @@ def setup_skill(folder: str) -> dict:
 #   (call setup_investigator() before reading state.version("investigator"))
 # Part 4 adds setup_skill("postmortem-report") to skills.
 def setup_agent() -> str:
-    raise NotImplementedError
+    config = dict(
+        name=state.name("commander"), model=COMMANDER_MODEL, system=COMMANDER_SYSTEM,
+        tools=TOOLS, skills=[setup_skill("incident-triage-runbook")], metadata=state.owner(),
+    )
+    return state.sync(
+        "agent", config,
+        create=lambda: client.beta.agents.create(**config),
+        update=lambda agent_id: client.beta.agents.update(
+            agent_id, version=client.beta.agents.retrieve(agent_id).version, **config),
+    )
 
 
 # ── 5. Session ────────────────────────────────────────────────────────────
@@ -92,7 +117,11 @@ def setup_agent() -> str:
 # The file lands at /mnt/session/uploads/app.log.
 # Part 3 adds the two memory resources: resources=[{...file...}, *setup_memory()]
 def start_session(agent_id: str, env_id: str, log_file_id: str) -> str:
-    raise NotImplementedError
+    session = client.beta.sessions.create(
+        agent=agent_id, environment_id=env_id, metadata=state.owner(),
+        resources=[{"type": "file", "file_id": log_file_id, "mount_path": "app.log"}],
+    )
+    return session.id
 
 
 # ── 6. Stream loop ────────────────────────────────────────────────────────
@@ -108,7 +137,20 @@ def start_session(agent_id: str, env_id: str, log_file_id: str) -> str:
 # Stop when ev.type == "session.status_terminated", or when it is "session.status_idle"
 # and ev.stop_reason.type != "requires_action" ("requires_action" means it is waiting on you).
 def stream_reply(session_id: str, user_text: str):
-    raise NotImplementedError
+    with client.beta.sessions.events.stream(session_id) as stream:
+        client.beta.sessions.events.send(session_id, events=[
+            {"type": "user.message", "content": [{"type": "text", "text": user_text}]}])
+        for ev in stream:
+            yield ev
+            if ev.type == "agent.custom_tool_use":
+                result = handle_tool(ev.name, ev.input)
+                client.beta.sessions.events.send(session_id, events=[
+                    {"type": "user.custom_tool_result", "custom_tool_use_id": ev.id,
+                     "content": [{"type": "text", "text": result}]}])
+            elif ev.type == "session.status_terminated":
+                break
+            elif ev.type == "session.status_idle" and ev.stop_reason.type != "requires_action":
+                break
 
 
 # ── 7. Local tool handlers ────────────────────────────────────────────────
@@ -119,13 +161,24 @@ def stream_reply(session_id: str, user_text: str):
 #   get_recent_deploys  -> deploys
 #   get_diff            -> diffs[commit[:7]], or a "no diff on file" message
 def handle_tool(name: str, args: dict) -> str:
-    raise NotImplementedError
+    if name == "list_incidents":
+        return json.dumps(incidents)
+    if name == "get_metrics":
+        try:
+            return json.dumps(metrics[args["service"]][args["metric"]])
+        except KeyError:
+            return json.dumps({service: list(names) for service, names in metrics.items()})
+    if name == "get_recent_deploys":
+        return deploys
+    if name == "get_diff":
+        return diffs.get(str(args.get("commit", ""))[:7], f"no diff on file for {args.get('commit')}")
+    return f"unknown tool: {name}"
 
 
 # ── 8. Delete session ─────────────────────────────────────────────────────
 # Sessions are real cloud resources: client.beta.sessions.delete(session_id)
 def delete_session(session_id: str) -> None:
-    raise NotImplementedError
+    client.beta.sessions.delete(session_id)
 
 
 # ══ PART 2 · multiagent ═══════════════════════════════════════════════════
