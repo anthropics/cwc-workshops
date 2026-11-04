@@ -1,0 +1,4 @@
+sutro_memories/
+__pycache__/
+.venv/
+.env
