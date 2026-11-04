@@ -79,7 +79,7 @@ def agent_name_for(base: str) -> str:
 
 
 def console_url(agent_id: str) -> str:
-    return f"https://console.anthropic.com/managed-agents/{agent_id}"
+    return f"https://platform.claude.com/workspaces/default/agents/{agent_id}"
 
 
 # ─── uploads ───────────────────────────────────────────────────────────────
