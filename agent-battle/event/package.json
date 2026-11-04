@@ -13,7 +13,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "express": "^4.19.2",
     "qrcode-generator": "^2.0.4",
     "ws": "^8.18.0"
