@@ -97,11 +97,24 @@ function accessibleName(el: HTMLElement): string {
   );
 }
 
+/**
+ * Escape a value for use inside a *quoted* attribute selector.
+ *
+ * `CSS.escape` serialises an identifier, which is what you need for an
+ * unquoted selector. Inside quotes the value is a string, so only `"` and `\`
+ * have to be escaped -- and `CSS` is a browser global that jsdom does not
+ * provide, so calling it here makes the verifier throw under a jsdom-based
+ * test runner.
+ */
+function forQuotedAttr(value: string): string {
+  return value.replace(/["\\]/g, "\\$&");
+}
+
 function inputLabel(el: HTMLInputElement, root: HTMLElement): boolean {
   if (el.getAttribute("aria-label") || el.getAttribute("aria-labelledby"))
     return true;
-  if (el.id && root.querySelector(`label[for="${CSS.escape(el.id)}"]`))
-    return true;
   if (el.closest("label")) return true;
+  if (el.id && root.querySelector(`label[for="${forQuotedAttr(el.id)}"]`))
+    return true;
   return false;
 }
