@@ -372,4 +372,4 @@ Point this at your own domain tonight: create a memory store, attach it to
 your CMA agent, run Dreaming over your last week of sessions. Docs:
 
 - Memory stores — https://platform.claude.com/docs/en/managed-agents/memory
-- Dreaming — https://platform.claude.com/docs/en/managed-agents/dreaming
+- Dreaming — https://platform.claude.com/docs/en/managed-agents/dreams
