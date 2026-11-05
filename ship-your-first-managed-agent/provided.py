@@ -58,7 +58,7 @@ TOOLS = [
                     "p99_latency_ms, error_rate, cache_hit_rate. db-primary: queries_per_sec, "
                     "cpu_utilization. db-inventory: queries_per_sec, cpu_utilization. "
                     'For a catalog request, use {"service": "", "metric": ""}. Any unsupported '
-                    "pair returns the catalog instead of readings. No other time window is available.",
+                    "pair returns the catalog instead of readings. Data outside the incident hour is unavailable.",
      "input_schema": {"type": "object",
                       "properties": {"service": {"type": "string"}, "metric": {"type": "string"}},
                       "required": ["service", "metric"]}},
@@ -68,9 +68,10 @@ TOOLS = [
                     "prefixes. This does not query current production or future schedules.",
      "input_schema": {"type": "object", "properties": {}}},
     {"type": "custom", "name": "get_diff",
-     "description": "Read a saved workshop code diff using the exact seven-character commit "
-                    "prefix returned by get_recent_deploys. An unknown prefix returns a no-diff "
-                    "result. This does not look up arbitrary repositories or normalize full SHAs.",
+     "description": "Read a saved workshop code diff using a known commit prefix or full SHA. "
+                    "The first seven characters select the saved patch. get_recent_deploys "
+                    "provides the prefixes. An unknown prefix returns a no-diff result. "
+                    "This does not look up arbitrary repositories.",
      "input_schema": {"type": "object", "properties": {"commit": {"type": "string"}},
                       "required": ["commit"]}},
 ]

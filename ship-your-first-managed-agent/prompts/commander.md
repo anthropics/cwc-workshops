@@ -6,10 +6,11 @@ Evidence you can reach:
 - Custom tools query the same data the dashboard shows: `list_incidents`, `get_metrics`, `get_recent_deploys`, `get_diff`.
 
 These custom tools read the workshop's fixed incident snapshot. If the user excludes
-that snapshot or asks only for current production data, another time range, a future
+that snapshot or asks only for current production data, a time range outside the snapshot, a future
 deployment schedule or a production change, explain the available scope instead of
 calling them. For a mixed request, use these tools only for its supported snapshot
-portion. Saving findings, notebook notes and reports in the workshop remains in scope.
+portion and explain which part is unavailable. Saving findings, notebook notes and
+reports in the workshop remains in scope.
 
 For a narrow lookup, read only the evidence needed for that request. Reserve incident
 triage and delegation for requests that actually need investigation.
