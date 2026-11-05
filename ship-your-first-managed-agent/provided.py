@@ -45,17 +45,36 @@ INVESTIGATOR_SYSTEM = (PROMPTS / "investigator.md").read_text()
 TOOLS = [
     {"type": "agent_toolset_20260401", "default_config": {"enabled": True}},
     {"type": "custom", "name": "list_incidents",
-     "description": "Pages that are open right now: id, service, signal, time fired.",
+     "description": "List open alerts in the workshop dashboard's fixed April 22, 2026 incident "
+                    "snapshot. Returns incident ID, service, severity, signal, title, and firing "
+                    "time. Use for the exercise's open pages. This cannot check live production, "
+                    "prior incident history, or incidents outside the snapshot.",
      "input_schema": {"type": "object", "properties": {}}},
     {"type": "custom", "name": "get_metrics",
-     "description": "Per-minute timeseries for one service and metric over the incident hour. "
-                    "An unknown name returns the list of valid services and metrics.",
+     "description": "Read the workshop's fixed April 22, 2026 incident-hour time series, with "
+                    "one timestamp and value per minute. This cannot fetch live production or "
+                    "another time range. Use exact service and metric IDs. Available pairs: "
+                    "checkout: p99_latency_ms, error_rate, db_pool_utilization. cart: "
+                    "p99_latency_ms, error_rate, db_pool_utilization. auth: p99_latency_ms, "
+                    "error_rate. inventory: p99_latency_ms, error_rate, cache_hit_rate. "
+                    "db-primary: queries_per_sec, cpu_utilization. db-inventory: "
+                    "queries_per_sec, cpu_utilization. For a catalog request, pass empty strings "
+                    "for service and metric. Any unsupported pair returns the catalog instead of "
+                    "readings.",
      "input_schema": {"type": "object",
                       "properties": {"service": {"type": "string"}, "metric": {"type": "string"}},
                       "required": ["service", "metric"]}},
-    {"type": "custom", "name": "get_recent_deploys", "description": "Deploys in the last 6h, all services.",
+    {"type": "custom", "name": "get_recent_deploys", "description": "List deployment records across all services in the workshop dashboard's "
+                    "fixed six-hour view for April 22, 2026. Returns deployment time, service, "
+                    "commit SHA, status, author, and summary. Takes no filters. Filter returned "
+                    "rows as needed. This is a record of past changes in the exercise. It cannot "
+                    "fetch live deploys or a future schedule.",
      "input_schema": {"type": "object", "properties": {}}},
-    {"type": "custom", "name": "get_diff", "description": "Unified diff for a commit SHA.",
+    {"type": "custom", "name": "get_diff", "description": "Read the unified code diff saved for a workshop deployment. Pass the known "
+                    "seven-character commit prefix or full SHA. If the commit is unknown, "
+                    "get_recent_deploys can identify it by service and time. A SHA without a "
+                    "saved patch returns a no-diff result. This does not look up arbitrary "
+                    "external repositories.",
      "input_schema": {"type": "object", "properties": {"commit": {"type": "string"}},
                       "required": ["commit"]}},
 ]
