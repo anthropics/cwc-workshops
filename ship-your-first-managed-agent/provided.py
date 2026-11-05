@@ -45,17 +45,32 @@ INVESTIGATOR_SYSTEM = (PROMPTS / "investigator.md").read_text()
 TOOLS = [
     {"type": "agent_toolset_20260401", "default_config": {"enabled": True}},
     {"type": "custom", "name": "list_incidents",
-     "description": "Pages that are open right now: id, service, signal, time fired.",
+     "description": "List open alerts in the workshop's fixed April 22, 2026 incident snapshot. "
+                    "Returns incident IDs, services, signals and firing times from the exercise. "
+                    "This does not query live production or incidents outside the snapshot.",
      "input_schema": {"type": "object", "properties": {}}},
     {"type": "custom", "name": "get_metrics",
-     "description": "Per-minute timeseries for one service and metric over the incident hour. "
-                    "An unknown name returns the list of valid services and metrics.",
+     "description": "Read a per-minute time series from the workshop's fixed April 22, 2026 "
+                    "incident hour. Returns timestamp/value readings, not live monitoring data. "
+                    "Use exact service and metric IDs. Available pairs: checkout: p99_latency_ms, "
+                    "error_rate, db_pool_utilization. cart: p99_latency_ms, error_rate, "
+                    "db_pool_utilization. auth: p99_latency_ms, error_rate. inventory: "
+                    "p99_latency_ms, error_rate, cache_hit_rate. db-primary: queries_per_sec, "
+                    "cpu_utilization. db-inventory: queries_per_sec, cpu_utilization. "
+                    'For a catalog request, use {"service": "", "metric": ""}. Any unsupported '
+                    "pair returns the catalog instead of readings. No other time window is available.",
      "input_schema": {"type": "object",
                       "properties": {"service": {"type": "string"}, "metric": {"type": "string"}},
                       "required": ["service", "metric"]}},
-    {"type": "custom", "name": "get_recent_deploys", "description": "Deploys in the last 6h, all services.",
+    {"type": "custom", "name": "get_recent_deploys",
+     "description": "List recorded deployments across services in the workshop's fixed six-hour "
+                    "view for April 22, 2026. Returns deployment times and seven-character commit "
+                    "prefixes. This does not query current production or future schedules.",
      "input_schema": {"type": "object", "properties": {}}},
-    {"type": "custom", "name": "get_diff", "description": "Unified diff for a commit SHA.",
+    {"type": "custom", "name": "get_diff",
+     "description": "Read a saved workshop code diff using the exact seven-character commit "
+                    "prefix returned by get_recent_deploys. An unknown prefix returns a no-diff "
+                    "result. This does not look up arbitrary repositories or normalize full SHAs.",
      "input_schema": {"type": "object", "properties": {"commit": {"type": "string"}},
                       "required": ["commit"]}},
 ]
