@@ -17,11 +17,12 @@ You build the PDF yourself, in your sandbox. There is no template. Design it so 
 
 ## How to build it
 
-- Python with matplotlib and pandas is installed. `matplotlib.backends.backend_pdf.PdfPages` writes multi-page PDFs. pandoc and LaTeX are there too. Use whichever you can do fastest.
-- The investigators' findings are in `/workspace/findings/*.json`. Start from those instead of investigating again.
+- Python with matplotlib and pandas is installed. Use Matplotlib for charts and an available flow-layout renderer for the report, such as ReportLab or HTML-to-PDF.
+- Load each complete incident file from `/workspace/findings/*.json` and check that every page in scope is represented. Start from those instead of investigating again. Calculate chart data from the log in your script, rather than copying arrays from prose.
 - Save the result to `/mnt/session/outputs/postmortem.pdf`. Only files under `/mnt/session/outputs/` reach the user.
-- Be quick: write one script, run it, and fix it only if it errors. Two to four pages. Do not render the PDF to images to inspect it.
-- Keep everything inside the page margins: wrap the title and any long table cell instead of letting it run off the edge.
+- Use wrapped cells in flow-layout tables, such as ReportLab `Paragraph` cells in a `Table` or `LongTable`. Let the tallest wrapped cell determine the shared row height, including padding. Repeat headers when a table spans pages.
+- Keep text, tables and charts inside the page margins at readable font sizes. Aim for two to four pages and allow extra pages when needed for legibility.
+- Render the PDF to images and inspect every page for overlaps, clipping and unreadable labels. Repair any defects, then regenerate and inspect the changed pages.
 - Follow any postmortem conventions you find in team memory.
 
 When it is built, tell the user the file name in one or two sentences. Do not paste the report into the chat.
