@@ -13,7 +13,7 @@ If you change the order below, say why in #sre.
 2. Line the deploy timestamps up against `p99_latency_ms` / `error_rate` for the paged service. State the gap ("deploy 14:31, p99 moves 14:33").
 3. If a deploy lines up: pull the diff, read it. Check for the stuff in the next section.
 4. Then grep the log to confirm. Don't grep to fish.
-5. No deploy lines up → the service may be a victim. Check `db_pool_utilization` across checkout/cart/auth/inventory, then the upstream deps (`db-primary`, `db-inventory`, `idp.internal`). Find what moved first.
+5. If no deploy lines up, look for an upstream cause. Compare `db_pool_utilization` for checkout and cart. Where relevant, compare `queries_per_sec` and `cpu_utilization` for `db-primary` and `db-inventory`. The fixture has no pool series for auth or inventory and no metric series for `idp.internal`. For auth, use its latency and error series and the application log. For inventory, also check `cache_hit_rate`. Find what moved first.
 
 Ask `get_metrics` for a name that doesn't exist and it lists the ones that do.
 
