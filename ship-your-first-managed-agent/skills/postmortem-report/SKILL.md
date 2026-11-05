@@ -17,7 +17,7 @@ You build the PDF yourself, in your sandbox. There is no template. Design it so 
 
 ## How to build it
 
-- Python with matplotlib and pandas is installed. Use Matplotlib for charts and an available flow-layout renderer for the report, such as ReportLab or HTML-to-PDF.
+- Python with matplotlib and pandas is installed. Use Matplotlib for charts and ReportLab for the report.
 - Load each complete incident file from `/workspace/findings/*.json` and check that every page in scope is represented. Start from those instead of investigating again. Calculate chart data from the log in your script, rather than copying arrays from prose.
 - Save the result to `/mnt/session/outputs/postmortem.pdf`. Only files under `/mnt/session/outputs/` reach the user.
 - Use wrapped cells in flow-layout tables, such as ReportLab `Paragraph` cells in a `Table` or `LongTable`. Let the tallest wrapped cell determine the shared row height, including padding. Repeat headers when a table spans pages.
