@@ -22,7 +22,6 @@ You build the PDF yourself, in your sandbox. There is no template. Design it so 
 - Save the result to `/mnt/session/outputs/postmortem.pdf`. Only files under `/mnt/session/outputs/` reach the user.
 - Use wrapped cells in flow-layout tables, such as ReportLab `Paragraph` cells in a `Table` or `LongTable`. Let the tallest wrapped cell determine the shared row height, including padding. Repeat headers when a table spans pages.
 - Keep text, tables and charts inside the page margins at readable font sizes. Aim for two to four pages and allow extra pages when needed for legibility.
-- Render the PDF to images and inspect every page for overlaps, clipping and unreadable labels. Repair any defects, then regenerate and inspect the changed pages.
 - Follow any postmortem conventions you find in team memory.
 
 When it is built, tell the user the file name in one or two sentences. Do not paste the report into the chat.
